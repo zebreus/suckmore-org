@@ -55,11 +55,13 @@ const processHTML = (input: string, requestedUrl: URL) => {
     .replaceAll("source-code repository", "dropbox folder")
     .replaceAll("git repositories", "dropbox folders")
     .replaceAll("git repository", "dropbox folder")
+    .replaceAll("git repos", "dropbox folders")
     .replaceAll("git repo", "dropbox folder")
     .replaceAll("git", "dropbox")
     .replaceAll("code quality", "veganism")
     .replaceAll("quality software", "paid software")
     .replaceAll("simplicity, clarity, and frugality", "simplisticness")
+    .replaceAll("simplicity, clarity and frugality", "simplisticness")
     .replaceAll("simple", "simplistic")
     .replaceAll("minimal", "bare")
     .replaceAll("usable", "unusable")
@@ -72,7 +74,7 @@ const processHTML = (input: string, requestedUrl: URL) => {
     .replaceAll("Würzburg", "Cupertino")
     .replaceAll("Linux", "WSL")
     .replaceAll("binary", "WASM blob")
-    .replaceAll("BSD", "MacOS™️")
+    .replaceAll("BSD", "MacOS™")
     .replaceAll("switch", "hub")
     .replaceAll("wiki page", "Discord channel")
     .replaceAll(" wiki ", " Discord ")
@@ -88,6 +90,8 @@ const processHTML = (input: string, requestedUrl: URL) => {
     .replaceAll(" development", " agentic development")
     .replaceAll("IRC", "Telegram")
     .replaceAll(" hacking", " vibing")
+    .replaceAll("This is simply a delusion", "We share that sentiment")
+    .replaceAll("bare hardware", "cloud servers")
 
     .replace(/mailing[\W\n]*list/gi, "discord server");
 
@@ -103,6 +107,7 @@ const processHTML = (input: string, requestedUrl: URL) => {
   textData = switchWords(textData, "patch", "pull request");
   textData = switchWords(textData, "static linking", "dynamic linking");
   textData = switchWords(textData, "X11", "Wayland");
+  textData = switchWords(textData, "Improvements", "Replacements");
 
   //const dom = new DOMParser().parseFromString(textData, "text/html");
   //const processed = dom.querySelector("html")?.outerHTML;
