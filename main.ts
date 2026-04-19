@@ -110,13 +110,27 @@ const processHTML = (input: string, requestedUrl: URL) => {
   return textData;
 };
 
+// Process SVG files
+const processSVG = (input: string, _requestedUrl: URL) => {
+  let textData = input;
+  textData = textData
+    .replaceAll("#1177aa", "rgb(204, 13, 125)")
+    .replaceAll("#17a", "rgb(204, 13, 125)")
+    .replaceAll("#1177AA", "rgb(204, 13, 125)")
+    .replaceAll("#069", "rgb(185, 7, 111)")
+    .replaceAll("#006699", "rgb(185, 7, 111)")
+    .replaceAll("#56c8ff", "rgb(255, 30, 161)")
+    .replaceAll("suckless", "suckmore");
+  return textData;
+};
+
 // Process CSS files
 const processCSS = (input: string, requestedUrl: URL) => {
   let textData = input;
   textData = textData
-    .replaceAll("#17a", "#ff149dff")
-    .replaceAll("#069", "#ff149dff")
-    .replaceAll("#56c8ff", "#ff149dff");
+    .replaceAll("#17a", "rgb(204, 13, 125)")
+    .replaceAll("#069", "rgb(185, 7, 111)")
+    .replaceAll("#56c8ff", "rgb(255, 30, 161)");
 
   textData += `
 #menu { transform: rotate(-0.5deg); }
@@ -192,11 +206,13 @@ export default {
         fileType == "png" ||
         fileType == "ico" ||
         fileType == "webm" ||
-        fileType == "svg" ||
         fileType == "jpg"
       ) {
         processed = await textResponse.blob();
         console.log("didnt process " + fileType);
+      } else if (fileType == "svg") {
+        processed = processSVG(await textResponse.text(), requestedUrl);
+        console.log("processed svg");
       } else if (fileType == "css") {
         processed = processCSS(await textResponse.text(), requestedUrl);
         console.log("processed css");
