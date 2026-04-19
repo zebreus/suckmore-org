@@ -18,6 +18,13 @@
           suckmore-org = final.callPackage ./default.nix { };
         }
       );
+      nixosModules.suckmore-org = {
+        nixpkgs.overlays = [
+          self.outputs.overlays.default
+        ];
+        imports = [ ./module.nix ];
+      };
+      nixosModules.default = self.outputs.nixosModules.suckmore-org;
     }
     // flake-utils.lib.eachDefaultSystem (
       system:
@@ -28,21 +35,13 @@
         packages.suckmore-org = pkgs.callPackage ./default.nix { };
         packages.default = packages.suckmore-org;
 
-        nixosModules.suckmore-org = {
-          nixpkgs.overlays = [
-            self.outputs.overlays.default
-          ];
-          imports = [ ./module.nix ];
-        };
-        nixosModules.default = nixosModules.suckmore-org;
-
         checks.opensPort = pkgs.testers.nixosTest {
           name = "suckmore-org-opens-port";
           nodes.machine =
             { config, pkgs, ... }:
             {
               imports = [
-                nixosModules.suckmore-org
+                self.outputs.nixosModules.suckmore-org
                 {
                   services.suckmore-org = {
                     enable = true;
