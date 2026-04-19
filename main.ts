@@ -2,7 +2,31 @@
 import { DOMParser } from "jsr:@b-fuze/deno-dom";
 
 const originalUrl = new URL("https://suckless.org");
-const myUrl = new URL("https://suckmore.org");
+
+const myOriginBasedOnRequest = (requestedUrl: URL) => {
+  if (requestedUrl.hostname.endsWith("localhost")) {
+    const myUrl = new URL("http://localhost");
+    myUrl.port = requestedUrl.port;
+    return myUrl;
+  }
+  // ipv4
+  if (requestedUrl.hostname.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)) {
+    const myUrl = new URL(requestedUrl.origin);
+    return myUrl;
+  }
+  // ipv6
+  if (requestedUrl.hostname.includes(":")) {
+    const myUrl = new URL(requestedUrl.origin);
+    return myUrl;
+  }
+  // strip subdomains
+  const myUrl = new URL(requestedUrl.origin);
+  const domainParts = myUrl.hostname.split(".");
+  if (domainParts.length > 2) {
+    myUrl.hostname = domainParts.slice(-2).join(".");
+  }
+  return myUrl;
+};
 
 const redirect = () => {
   console.error("Redirecting to original page");
@@ -14,21 +38,6 @@ const redirect = () => {
   });
 };
 
-const hostnameNoSubDomain = (requestedUrl: URL) => {
-  let toReturn = "";
-  const hostname = requestedUrl.hostname;
-
-  if (hostname.split(".").length >= 3) {
-    toReturn =
-      hostname.split(".")[hostname.split(".").length - 2] +
-      "." +
-      hostname.split(".")[hostname.split(".").length - 1];
-  } else {
-    toReturn = hostname;
-  }
-  return toReturn;
-};
-
 // Process HTML files
 const processHTML = (input: string, requestedUrl: URL) => {
   let textData = input;
@@ -37,7 +46,8 @@ const processHTML = (input: string, requestedUrl: URL) => {
       '<span id="headerSubtitle">software that sucks less</span>',
       '<marquee id="headerSubtitle" style="width: auto"><span>software that sucks less</span></marquee>',
     )
-    .replaceAll(originalUrl.host, hostnameNoSubDomain(requestedUrl))
+    .replaceAll(originalUrl.origin, myOriginBasedOnRequest(requestedUrl).origin)
+    .replaceAll(originalUrl.host, myOriginBasedOnRequest(requestedUrl).host)
     .replaceAll("suckless", "suckmore")
     .replaceAll("gcc", "Java EE 7")
     .replace(/([^a-zA-Z0-9])C(99)?([^a-zA-Z0-9])/g, "$1Java 7$3")
@@ -147,24 +157,30 @@ const switchWords = (text: string, a: string, b: string) => {
     .replaceAll("TEMP_PLACEHOLDER", b);
 };
 
+const getUpstreamUrl = (requestedUrl: URL) => {
+  const myUrl = myOriginBasedOnRequest(requestedUrl);
+  const myDomainParts = myUrl.hostname.split(".");
+  const requestedDomainParts = requestedUrl.hostname.split(".");
+  const subDomainToUse =
+    requestedDomainParts.length != myDomainParts.length
+      ? [requestedDomainParts[0]]
+      : [];
+
+  const otherUrl = new URL(requestedUrl);
+  otherUrl.hostname = [
+    ...subDomainToUse,
+    ...originalUrl.hostname.split("."),
+  ].join(".");
+  otherUrl.port = originalUrl.port;
+  otherUrl.protocol = originalUrl.protocol;
+  return otherUrl;
+};
+
 export default {
   fetch: async (req) => {
     try {
       const requestedUrl = new URL(req.url);
-
-      const mySubdomain = myUrl.hostname.split(".")[0];
-      const requestedSubdomain = requestedUrl.hostname.split(".")[0];
-      const subDomainToUse =
-        mySubdomain != requestedSubdomain ? requestedSubdomain + "." : "";
-
-      const fullDomainToParse = new URL(
-        requestedUrl.protocol +
-          "//" +
-          subDomainToUse +
-          "suckless.org" +
-          requestedUrl.pathname +
-          requestedUrl.search,
-      );
+      const fullDomainToParse = getUpstreamUrl(requestedUrl);
 
       console.log({ fullDomainToParse });
       const textResponse = await fetch(fullDomainToParse.href);
