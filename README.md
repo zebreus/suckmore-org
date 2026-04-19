@@ -1,4 +1,4 @@
-# example-webapp
+# suckmore-org
 
 A template for a web app that deploys as a NixOS service.
 
@@ -46,15 +46,15 @@ Add the flake as an input and import the module:
 ```nix
 # flake.nix of your NixOS config
 {
-  inputs.example-webapp.url = "github:YOUR-USER/YOUR-REPO";
+  inputs.suckmore-org.url = "github:YOUR-USER/YOUR-REPO";
 
-  outputs = { self, nixpkgs, example-webapp, ... }: {
+  outputs = { self, nixpkgs, suckmore-org, ... }: {
     nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        example-webapp.nixosModules.default
+        suckmore-org.nixosModules.default
         {
-          services.example-webapp = {
+          services.suckmore-org = {
             enable = true;
             port = 3000;
             host = "[::]";
@@ -70,8 +70,8 @@ Add the flake as an input and import the module:
 
 | Option                             | Default                   | Description                       |
 | ---------------------------------- | ------------------------- | --------------------------------- |
-| `services.example-webapp.enable`   | `false`                   | Enable the service                |
-| `services.example-webapp.port`     | `3000`                    | Port to listen on                 |
-| `services.example-webapp.host`     | `[::]`                    | Address to bind to                |
-| `services.example-webapp.dataDir`  | `/var/lib/example-webapp` | Working directory for the service |
-| `services.example-webapp.location` | `null`                    | Value of `globalThis.location`    |
+| `services.suckmore-org.enable`   | `false`                   | Enable the service                |
+| `services.suckmore-org.port`     | `3000`                    | Port to listen on                 |
+| `services.suckmore-org.host`     | `[::]`                    | Address to bind to                |
+| `services.suckmore-org.dataDir`  | `/var/lib/suckmore-org` | Working directory for the service |
+| `services.suckmore-org.location` | `null`                    | Value of `globalThis.location`    |

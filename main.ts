@@ -3,7 +3,7 @@ const html = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>example-webapp</title>
+  <title>suckmore-org</title>
   <style>
     body {
       font-family: system-ui, sans-serif;

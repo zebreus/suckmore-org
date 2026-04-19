@@ -6,12 +6,12 @@
 }:
 
 let
-  cfg = config.services.example-webapp;
+  cfg = config.services.suckmore-org;
 in
 {
   options = {
-    services.example-webapp = {
-      enable = lib.mkEnableOption "Enable the example-webapp service.";
+    services.suckmore-org = {
+      enable = lib.mkEnableOption "Enable the suckmore-org service.";
 
       host = lib.mkOption {
         type = lib.types.str;
@@ -36,44 +36,44 @@ in
 
       package = lib.mkOption {
         type = lib.types.package;
-        description = lib.mdDoc "example-webapp package used for the service.";
-        default = pkgs.example-webapp;
-        defaultText = lib.literalExpression "pkgs.example-webapp";
+        description = lib.mdDoc "suckmore-org package used for the service.";
+        default = pkgs.suckmore-org;
+        defaultText = lib.literalExpression "pkgs.suckmore-org";
       };
 
       dataDir = lib.mkOption {
         type = lib.types.str;
-        default = "/var/lib/example-webapp";
-        example = "/var/lib/example-webapp";
-        description = lib.mdDoc "Data directory. All example-webapp data will be put here.";
+        default = "/var/lib/suckmore-org";
+        example = "/var/lib/suckmore-org";
+        description = lib.mdDoc "Data directory. All suckmore-org data will be put here.";
       };
     };
   };
 
   config = lib.mkIf cfg.enable {
-    users.users.example-webapp = {
+    users.users.suckmore-org = {
       isSystemUser = true;
       createHome = true;
       home = cfg.dataDir;
-      group = "example-webapp";
+      group = "suckmore-org";
     };
-    users.groups.example-webapp = { };
+    users.groups.suckmore-org = { };
 
-    systemd.services."example-webapp" = {
+    systemd.services."suckmore-org" = {
       serviceConfig = {
         Type = "simple";
-        User = "example-webapp";
-        Group = "example-webapp";
+        User = "suckmore-org";
+        Group = "suckmore-org";
         Restart = "on-failure";
         RestartSec = "30s";
         WorkingDirectory = cfg.dataDir;
-        ExecStart = "${lib.getExe pkgs.example-webapp} --port ${builtins.toString cfg.port} --host ${cfg.host} ${
+        ExecStart = "${lib.getExe pkgs.suckmore-org} --port ${builtins.toString cfg.port} --host ${cfg.host} ${
           if (builtins.isNull cfg.location) then "" else "--location ${cfg.location}"
         }";
       };
       wantedBy = [ "multi-user.target" ];
 
-      description = "example-webapp server";
+      description = "suckmore-org server";
 
       environment = {
         HOST = "${cfg.host}";

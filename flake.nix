@@ -1,5 +1,5 @@
 {
-  description = "NixOS module for example-webapp";
+  description = "NixOS module for suckmore-org";
 
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
@@ -15,7 +15,7 @@
     {
       overlays.default = (
         final: prev: {
-          example-webapp = final.callPackage ./default.nix { };
+          suckmore-org = final.callPackage ./default.nix { };
         }
       );
     }
@@ -25,26 +25,26 @@
         pkgs = import nixpkgs { inherit system; };
       in
       rec {
-        packages.example-webapp = pkgs.callPackage ./default.nix { };
-        packages.default = packages.example-webapp;
+        packages.suckmore-org = pkgs.callPackage ./default.nix { };
+        packages.default = packages.suckmore-org;
 
-        nixosModules.example-webapp = {
+        nixosModules.suckmore-org = {
           nixpkgs.overlays = [
             self.outputs.overlays.default
           ];
           imports = [ ./module.nix ];
         };
-        nixosModules.default = nixosModules.example-webapp;
+        nixosModules.default = nixosModules.suckmore-org;
 
         checks.opensPort = pkgs.testers.nixosTest {
-          name = "example-webapp-opens-port";
+          name = "suckmore-org-opens-port";
           nodes.machine =
             { config, pkgs, ... }:
             {
               imports = [
-                nixosModules.example-webapp
+                nixosModules.suckmore-org
                 {
-                  services.example-webapp = {
+                  services.suckmore-org = {
                     enable = true;
                     port = 3000;
                     host = "[::]";
@@ -53,7 +53,7 @@
               ];
             };
           testScript = ''
-            machine.wait_for_unit("example-webapp.service", timeout = 30)
+            machine.wait_for_unit("suckmore-org.service", timeout = 30)
             machine.wait_for_open_port(3000, timeout = 30)
           '';
         };
