@@ -138,9 +138,9 @@ const processCSS = (input: string, requestedUrl: URL) => {
     .replaceAll("#56c8ff", "rgb(255, 30, 161)");
 
   textData += `
-#menu { transform: rotate(-0.5deg); }
+#menu { transform: rotate(-0.4deg); }
 p {
-  animation: slide-in 10s linear infinite;
+  animation: slide-in 25s linear infinite;
   transform-origin: center;}
 
 @keyframes slide-in {
@@ -148,13 +148,13 @@ p {
     transform: rotate(0deg);
   }
   25% {
-    transform: rotate(0.8deg);
+    transform: rotate(0.7deg);
   }
   50% {
     transform: rotate(0deg);
   }
   75% {
-    transform: rotate(-0.8deg);
+    transform: rotate(-0.7deg);
   }
   100% {
     transform: rotate(0deg);
