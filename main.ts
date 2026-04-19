@@ -143,6 +143,13 @@ p {
   animation: slide-in 25s linear infinite;
   transform-origin: center;}
 
+@media (prefers-reduced-motion: reduce) {
+p {
+  /* lets reduce the motion */
+  animation: slide-in 120s linear infinite;
+  }
+}
+
 @keyframes slide-in {
   0% {
     transform: rotate(0deg);
@@ -160,6 +167,7 @@ p {
     transform: rotate(0deg);
   }
 }
+
         `;
 
   const dom = new DOMParser().parseFromString(textData, "text/html");
